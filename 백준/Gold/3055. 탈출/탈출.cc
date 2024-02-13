@@ -14,22 +14,6 @@ queue<pair<int, int>> go_q;
 bool visited[50][50];
 int ans = 0;
 
-//void water_spread()
-//{
-//	for (int i = 0; i < r; i++)
-//		for (int j = 0; j < c; j++)
-//			if (arr[i][j] == '*')
-//			{
-//				for (int k = 0; k < 4; k++)
-//				{
-//					int nx = i + dx[k];
-//					int ny = j + dy[k];
-//					if (nx >= 0 && ny >= 0 && nx < r && ny < c && arr[nx][ny] == '.')
-//						arr[nx][ny] = '*';
-//				}
-//			}
-//}
-
 void bfs()
 {
 	while (!go_q.empty())
