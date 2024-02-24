@@ -1,74 +1,72 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <queue>
+#include <algorithm>
 #define INF 999'999'999
 using namespace std;
 
-int v, e, k;
-vector<pair<int, int>> adj[20001];
-int dist[20001];
-int visited[20001];
-
+int V, E, K;
+vector<vector<pair<int, int>>> adj;
+vector<int> dist;
 
 void Dijkstra(int start)
 {
 	dist[start] = 0;
 	priority_queue<pair<int, int>> pq;
-	pq.push({ dist[start], start });
+	pq.push({ -dist[start], start });
 
 	while (!pq.empty())
 	{
-		//방문하지 않은 노드 중 거리가 최소인 노드 선택
-		int cur = pq.top().second;
-		int cur_cost = -pq.top().first;
+		int cur_node = pq.top().second;
+		int cur_cost = -pq.top().first; //시작 노드에서 현재 노드까지의 거리
 		pq.pop();
-
-		for (int i = 0; i < adj[cur].size(); i++)
+		
+		for (int i = 0; i < adj[cur_node].size(); i++)
 		{
-			int next = adj[cur][i].first;
-			int next_dist = adj[cur][i].second;
-
-			if (dist[next] > cur_cost + next_dist)
+			pair<int, int> next = adj[cur_node][i];
+			int next_node = next.first;
+			int next_cost = next.second; //시작 노드에서 다음 노드까지의 거리
+			
+			//시작->다음 보다 시작->현재->다음이 더 짧으면
+			if (dist[next_node] > cur_cost + next_cost) 
 			{
-				dist[next] = cur_cost + next_dist;
-				pq.push(make_pair(-dist[next], next));
+				dist[next_node] = cur_cost + next_cost;
+				pq.push({ -dist[next_node], next_node}); // 업데이트한 거리 push
 			}
 		}
 	}
 }
 
 
-
-
 int main()
 {
 	ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 
-	cin >> v >> e;
-	cin >> k;
+	cin >> V >> E;
+	adj.resize(V + 1);
+	dist.resize(V + 1);
 
-	for (int i = 1; i <= v; i++)
+	for (int i = 1; i <= V; i++)
 	{
 		dist[i] = INF;
-		visited[i] = false;
 	}
 
-	for (int i = 0; i < e; i++)
+	cin >> K;
+
+	for (int i = 0; i < E; i++)
 	{
-		int u, v, w;
-		cin >> u >> v >> w;
-		adj[u].push_back(make_pair(v, w));
+		int a, b, c;
+		cin >> a >> b >> c;
+		adj[a].push_back(make_pair(b, c));
 	}
 
-	Dijkstra(k);
+	Dijkstra(K);
 
-	for (int i = 1; i <= v; i++)
+	for (int i = 1; i <= V; i++)
 	{
 		if (dist[i] == INF) cout << "INF\n";
 		else cout << dist[i] << '\n';
 	}
 
-	
 	return 0;
 }
