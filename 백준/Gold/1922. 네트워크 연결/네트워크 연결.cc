@@ -29,10 +29,13 @@ void UNION(int a, int b)
 
 }
 
-const bool comp(const edge& a, const edge& b)
+bool comp(const edge& a, const edge& b)
 {
-	return b.w < a.w;
+	return a.w > b.w;
 }
+
+
+
 
 int main()
 {
@@ -60,21 +63,18 @@ int main()
 	}
 
 	sort(E.begin(), E.end(), comp);
-	
-	//cout << '\n';
-	//for (int i = 0; i < m; i++)
-	//{
-	//	cout << E[i].s << ' ' << E[i].e << ' ' << E[i].w << '\n';
-	//}
-	//cout << '\n';
 
 	int edge_cnt = 0;
 	int ans = 0;
-	for (int i = m - 1; i >= 0; i--)
+	for (int i = m-1; i >= 0; i--) //가중치가 작은 순으로 엣지 탐색
 	{
-		if (edge_cnt == n - 1) break;
-		if (FIND(E[i].s) == FIND(E[i].e)) continue;
+		//엣지 개수가 노드 개수 - 1이면 끝낸다
+		if (edge_cnt == n - 1) break; 
+		
+		//s와 e가 이미 연결되어 있는 경우 간선 선택하지 않음
+		if (FIND(E[i].s) == FIND(E[i].e)) continue; 
 
+		//간선 선택
 		UNION(E[i].s, E[i].e);
 		ans += E[i].w;
 		edge_cnt++;
