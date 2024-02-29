@@ -1,137 +1,117 @@
 #include <iostream>
-#include <deque>
 #include <vector>
-#include <algorithm>
-#include <math.h>
-#include <list>
 #include <queue>
+#include <cmath>
 using namespace std;
 
-int n, m;
-int k;
-vector<vector<int>> ADJ;
-vector<bool> visited;
-vector<int> D;
-vector<vector<int>> parent;
+static int N, M;
+static vector <vector<int>> tree;
+static vector<int> depth;
+static int kmax;
+static int parent[21][100001];
+static vector<bool> visited;
 
-void bfs(int n)
-{
-	queue<int> q;
-	q.push(n);
-	visited[n] = true;
-	
-	int depth = 0;
-
-	while (!q.empty())
-	{
-		int qsize = q.size();
-		for (int i = 0; i < qsize; i++)
-		{
-			int cur = q.front();
-			D[cur] = depth;
-			q.pop();
-
-			for (int j = 0; j < ADJ[cur].size(); j++)
-			{
-				int next = ADJ[cur][j];
-				if (!visited[next])
-				{
-					q.push(next);
-					visited[next] = true;
-					parent[0][next] = cur;
-				}
-			}
-		}
-		depth++;
-
-	}	
-}
-
-
-
-int find_LCA(int a, int b)
-{
-	if (D[a] != D[b])
-	{
-		if (D[a] > D[b]) swap(a, b); //항상 b가 크도록 함
-
-		//깊이 맞추기
-		for (int i = k; i >= 0; i--)
-		{
-			if (pow(2, i) <= D[b] - D[a])
-			{
-				b = parent[i][b];
-			}
-		}
-	}
-
-	if (a == b) return a;
-
-
-	//LCA 찾기
-	int res_a, res_b;
-	for (int i = k; i >= 0; i--)
-	{
-		if (parent[i][a] != parent[i][b])
-		{
-			if (parent[i][a] != 0) //a가 1인 경우 부모로 올라가지 않음
-			{
-				a = parent[i][a];
-				b = parent[i][b];
-			}
-		}
-	}
-	a = parent[0][a];
-	return a;
-}
-
-
+int excuteLCA(int a, int b);
+void BFS(int node);
+void BFS(int node);
 
 int main()
 {
-	ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
-	cin >> n;
+    cin >> N;
 
-	ADJ.resize(n + 1);
-	visited.resize(n + 1, false);
-	D.resize(n + 1);
+    tree.resize(N + 1);
+    depth.resize(N + 1);
+    visited.resize(N + 1);
 
-	for (int i = 0; i < n-1; i++)
-	{
-		int a, b;
-		cin >> a >> b;
-		ADJ[a].push_back(b);
-		ADJ[b].push_back(a);
-	}
-
-	k = floor(log2(n));
-	//cout << "K: " << k << '\n';
-	parent.resize(k + 1, vector<int>(n + 1));
-
-	//bfs
-	bfs(1);
+    for (int i = 0; i < N - 1; i++) { // A인접리스트에 그래프 데이터 저장
+        int s, e;
+        cin >> s >> e;
+        tree[s].push_back(e);
+        tree[e].push_back(s);
+    }
 
 
-	//dp
-	for (int i = 1; i <= k; i++)
-	{
-		for (int j = 2; j <= n; j++)
-		{
-			parent[i][j] = parent[i - 1][parent[i - 1][j]];
-		}
-	}
+    kmax = ceil(log2(N));
+
+    BFS(1); // depth를 BFS를 통하여 구하기
+
+    for (int k = 1; k <= kmax; k++) {   // 점화식을 이용한 parent 배열 채우기
+        for (int n = 1; n <= N; n++) {
+            parent[k][n] = parent[k - 1][parent[k - 1][n]];
+        }
+    }
+
+    cin >> M;
+    for (int i = 0; i < M; i++) {
+        // 공통 조상을 구할 두 노드
+        int a, b;
+
+        cin >> a >> b;
+        int LCA = excuteLCA(a, b);
+        cout << LCA << "\n";
+    }
+}
 
 
+int excuteLCA(int a, int b) 
+{
+    if (depth[a] > depth[b]) //더 깊이가 깊은 depth가 b가 되도록 변경해주기
+        swap(a, b);
+    
 
-	cin >> m;
-	for (int i = 0; i < m; i++)
-	{
-		int a, b;
-		cin >> a >> b;
+    for (int k = kmax; k >= 0; k--) // depth 빠르게 맞춰주기
+    {
+        if (pow(2, k) <= depth[b] - depth[a]) 
+            if (depth[a] <= depth[parent[k][b]]) 
+                b = parent[k][b];
+    }
 
-		cout << find_LCA(a, b) << '\n';
-	}
+    for (int k = kmax; k >= 0 && a != b; k--) // 조상 빠르게 찾기
+    { 
+        if (parent[k][a] != parent[k][b]) {
+            a = parent[k][a];
+            b = parent[k][b];
+        }
+    }
+    int LCA = a;
+    if (a != b)
+        LCA = parent[0][LCA];
+    return LCA;
+}
 
-	return 0;
+
+void BFS(int node)
+{
+    queue<int> q;
+    q.push(node);
+    visited[node] = true;
+
+    int qsize;
+    int level = 1;
+
+    while (!q.empty())
+    {
+        qsize = q.size();
+
+        for (int i = 0; i < qsize; i++)
+        {
+            int now = q.front();
+            q.pop();
+
+            for (int next : tree[now])
+            {
+                if (!visited[next])
+                {
+                    q.push(next);
+                    visited[next] = true;
+                    parent[0][next] = now; // 부모 노드 저장
+                    depth[next] = level; //노드 depth 저장
+                }
+            }
+        }
+
+        level++;
+    }
 }
