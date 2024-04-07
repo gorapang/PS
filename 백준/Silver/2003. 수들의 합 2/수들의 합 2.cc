@@ -1,30 +1,29 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 using namespace std;
 
-int n, m, arr[10001];
-int sum;
-int ans = 0;
+int arr[10001];
 
-int main()
-{
+int main() {
 	ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-	cin >> n >> m;
-	for (int i = 0; i < n; i++)
-	{
-		cin >> arr[i];
-	}
 
-	for (int i = 0; i < n; i++)
+	int N, M;
+	cin >> N >> M;
+
+	for (int i = 0; i < N; i++) 
+		cin >> arr[i];
+
+	int sum = 0, s = 0, e = 0, ans = 0;
+
+	while (e <= N) 
 	{
-		sum = 0;
-		for (int j = i; j < n; j++)
-		{
-			sum += arr[j];
-			if (sum == m) ans++;
+		if (sum > M) 
+			sum -= arr[s++];
+		else if (sum == M) {
+			ans++;
+			sum -= arr[s++];
 		}
+		else
+			sum += arr[e++];
 	}
-	cout << ans << '\n';
-	return 0;
+	cout << ans;
 }
