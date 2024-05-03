@@ -4,8 +4,6 @@
 #include <cmath>
 using namespace std;
 
-#define min(n, m) n > m ? m : n
-
 int arr[4][2];
 double dist[4][4];
 bool visited[4];
