@@ -15,8 +15,8 @@ int main()
 	{
 		int tc;
 		cin >> tc;
-		
-		int score[101] = { 0, };
+
+		int score[101] = { 0, }; // score[i]: i점이 나온 횟수
 		for (int i = 0; i < 1000; i++)
 		{
 			int n;
@@ -24,18 +24,18 @@ int main()
 			score[n]++;
 		}
 
-		int ans = -1;
-		int max_score = 0;
+		int ans = -1; // 최빈값
+		int max_count = 0;
 
 		for (int i = 0; i <= 100; i++)
 		{
-			if (score[i] >= max_score)
+			if (score[i] >= max_count)
 			{
-				max_score = score[i];
+				max_count = score[i];
 				ans = i;
 			}
 		}
-		
+
 		cout << '#' << tc << ' ' << ans << '\n';
 	}
 
