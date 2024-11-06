@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int minimum_time_to_clear_snow(vector<int>& snow) 
+int solve(vector<int>& snow) 
 {
     int minutes = 0;
 
@@ -39,7 +39,7 @@ int main()
     for (int i = 0; i < N; i++) 
         cin >> snow[i];
     
-    cout << minimum_time_to_clear_snow(snow) << '\n';
+    cout << solve(snow) << '\n';
 
     return 0;
 }
