@@ -1,66 +1,66 @@
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <iostream>
 #include <queue>
-#include <cmath>
+#include <iostream>
+#define INF 987654321
 using namespace std;
 
-vector<int> diff; //나눈 두 전력망의 송전탑 개수 차이
 vector<vector<int>> graph;
 
-int bfs(int start, int n, int a, int b) {
-    vector<bool> visited(n+1);
-    int count = 1; //송전탑개수
-    queue<int> q;
-    q.push(start);
-    visited[start] = true;
+int bfs(int start, int a, int b, int n) {
+    int cnt = 0;
     
-
-    while(!q.empty()) {
+    vector<bool> visited(n, false);
+    queue<int> q;
+    
+    visited[start] = true;
+    q.push(start);
+    cnt++;
+    
+    while (!q.empty()) {
         int cur = q.front();
         q.pop();
         
-        for (int next: graph[cur]) {
+        for (int next : graph[cur]) {
             if (cur == a && next == b) continue;
             if (cur == b && next == a) continue;
             
             if (!visited[next]) {
-                count++;
                 visited[next] = true;
                 q.push(next);
+                cnt++;
             }
         }
+        
     }
-    return count;
+    
+    return cnt;
 }
 
-
 int solution(int n, vector<vector<int>> wires) {
-    int answer = -1;
+    int answer = INF;
     
     graph.resize(n+1);
-    for (int i=0;i<n-1;i++) {
-        int a = wires[i][0]; 
+    
+    for (int i=0;i<wires.size();i++) {
+        int a = wires[i][0];
         int b = wires[i][1];
         graph[a].push_back(b);
         graph[b].push_back(a);
     }
     
-    
-    int ans = 987654321;
-    
-    for (int i=0;i<n-1;i++) {
-        // i번째 와이어가 없다고 가정
-        int a = wires[i][0];
-        int b = wires[i][1];
-        int cnt = bfs(1, n, a, b);
+    //끊기
+    for (int i=0;i<wires.size();i++) {
+        int a= wires[i][0];
+        int b= wires[i][1];
         
-        int d = abs((n-cnt) - cnt);
-        if (d < ans) ans = d;
+        int cnt = bfs(1, a, b, n);
+        cout << cnt << '\n';
         
+        int cnt2 = n-cnt;
+        int diff = abs(cnt-cnt2);
+        answer = min(answer, diff);
     }
     
-    
-    return ans;
+    return answer;
 }
